@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Invitación</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: linear-gradient(135deg, #5b2c83, #7d3fc7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+.envelope {
+    width: 320px;
+    height: 210px;
+    position: fixed;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.base {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #fff5ff, #f1dcff);
+    border-radius: 10px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.35);
+    border: 2px solid #e0c7ff;
+    position: absolute;
+    bottom: 0;
+}
+
+.flap {
+    width: 0;
+    height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-bottom: 100px solid #e6ccff;
+    position: absolute;
+    top: 0;
+    transform-origin: top;
+    transition: transform 1s ease;
+}
+
+.envelope-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #6c3483;
+    z-index: 5;
+    letter-spacing: 1px;
+    font-size: 32px;
+    font-family: 'Great Vibes', cursive;
+
+}
+
+.letter {
+    width: 360px;
+    height: 420px;
+    background: linear-gradient(180deg, #ffffff, #f8f1ff);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 120%);
+    opacity: 0;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,.4);
+    transition: all 1s ease;
+    z-index: 9998;
+    border: 2px solid #eadcff;
+    font-family: 'Playfair Display', serif;
+
+
+}
+
+.letter.show {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.text {
+    font-size: 18px;
+    color: #4a235a;
+    line-height: 1.6;
+    margin-bottom: 35px;
+}
+
+.buttons {
+    position: relative;
+    height: 130px;
+}
+
+button {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    box-shadow: 0 8px 18px rgba(0,0,0,.25);
+
+}
+
+#yes {
+    background: linear-gradient(135deg, #7d3fc7, #b47cff);
+    color: white;
+}
+
+#no {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    color: white;
+    position: absolute;
+    right: 0;
+    transition: none;
+    will-change: transform;
+}
+
+
+#maybe {
+    background: #f1c40f;
+    margin-top: 60px;
+}
+
+.message {
+    display: none;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #6c3483;
+    font-weight: bold;
+}
+.flower {
+    position: fixed;
+    top: -30px;
+    font-size: 20px;
+    animation: flowerFall linear forwards;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+@keyframes flowerFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
+}</style>
+</head>
+
+<body>
+
+<div class="envelope" id="envelope">
+    <div class="flap" id="flap"></div>
+    <div class="base"></div>
+    <div class="envelope-text" id="hint">👉🏻Tocame👈🏻</div>
+</div>
+
+<div class="letter" id="letter">
+    <div class="text">
+    ✨ My Shaylaaa ✨<br><br>
+    Este 31 voy a recibir el Año Nuevo en casa con mi familia,<br>
+    me encantaría muchisimo que estuvieras conmigo<br>
+    y que puedas conocer mi familia 💖
+</div>
+
+    <div class="buttons">
+        <button id="yes">Sí</button>
+        <button id="no">No</button><br>
+    </div>
+
+    <div class="message" id="message">
+        ✨ Sabia que dirias que sí ✨<br>
+        Me haría muy feliz compartir ese momento contigo 💖
+    </div>
+</div>
+
+<script>
+const envelope = document.getElementById("envelope");
+const flap = document.getElementById("flap");
+const letter = document.getElementById("letter");
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const buttonsBox = document.querySelector(".buttons");
+
+let opened = false;
+
+envelope.onclick = () => {
+    if (!opened) {
+        flap.style.transform = "rotateX(180deg)";
+        letter.classList.add("show");
+        document.getElementById("hint").style.display = "none";
+
+        setTimeout(() => {
+            envelope.style.display = "none";
+        }, 300);
+
+        opened = true;
+    }
+};
+
+const safeDistance = 60;
+let lastX = 0;
+let lastY = 0;
+
+buttonsBox.addEventListener("mousemove", (e) => {
+    const btnRect = noBtn.getBoundingClientRect();
+    const boxRect = buttonsBox.getBoundingClientRect();
+
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    const btnCenterX = btnRect.left + btnRect.width / 2;
+    const btnCenterY = btnRect.top + btnRect.height / 2;
+
+    const distance = Math.hypot(
+        mouseX - btnCenterX,
+        mouseY - btnCenterY
+    );
+
+    if (distance < safeDistance) {
+        const maxX = boxRect.width - btnRect.width;
+        const maxY = boxRect.height - btnRect.height;
+
+        let newX, newY;
+
+        do {
+            newX = Math.random() * maxX;
+            newY = Math.random() * maxY;
+        } while (
+            Math.abs(newX - lastX) < safeDistance &&
+            Math.abs(newY - lastY) < safeDistance
+        );
+
+        lastX = newX;
+        lastY = newY;
+
+        noBtn.style.transform = `translate(${newX}px, ${newY}px)`;
+    }
+});
+
+
+function showSurprise() {
+
+    if (document.getElementById("surpriseBox")) return;
+
+    
+    launchFlowers();
+
+    const alertBox = document.createElement("div");
+    alertBox.id = "surpriseBox";
+    alertBox.style.position = "fixed";
+    alertBox.style.top = "50%";
+    alertBox.style.left = "50%";
+    alertBox.style.transform = "translate(-50%, -50%) scale(0)";
+    alertBox.style.background = "white";
+    alertBox.style.padding = "30px 40px";
+    alertBox.style.borderRadius = "15px";
+    alertBox.style.boxShadow = "0 20px 40px rgba(0,0,0,.4)";
+    alertBox.style.textAlign = "center";
+    alertBox.style.fontSize = "18px";
+    alertBox.style.color = "#6c3483";
+    alertBox.style.zIndex = "10000";
+
+    alertBox.innerHTML = `
+
+        💖 Sabias que ibas aceptar 💖<br><br>
+        Me haria muy feliz compartir<br>
+        este momento contigo ✨<br><br>
+
+        <button id="closeAlert" style="
+            margin-top: 20px;
+            padding: 10px 26px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #7d3fc7, #b47cff);
+            color: white;
+            box-shadow: 0 8px 18px rgba(0,0,0,.25);
+        ">
+            Cerrar ❌
+        </button>
+    `;
+
+    document.body.appendChild(alertBox);
+
+    setTimeout(() => {
+        alertBox.style.transition = "transform 0.6s ease";
+        alertBox.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 50);
+
+    document.getElementById("closeAlert").onclick = () => {
+        alertBox.style.transform = "translate(-50%, -50%) scale(0)";
+        setTimeout(() => alertBox.remove(), 300);
+    };
+}
+
+yesBtn.addEventListener("click", () => {
+    showSurprise();
+});
+
+function launchFlowers() {
+    const flowers = ["🌷", "🌹", "💐", "🌼", "🌻"];
+
+    for (let i = 0; i < 90; i++) {
+        const flower = document.createElement("div");
+        flower.className = "flower";
+        flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+
+        flower.style.left = Math.random() * 100 + "vw";
+        flower.style.animationDuration = 3 + Math.random() * 2 + "s";
+        flower.style.fontSize = 18 + Math.random() * 14 + "px";
+
+        document.body.appendChild(flower);
+
+        setTimeout(() => flower.remove(), 6000);
+    }
+}
+</script>
+
+</body>
+</html>
